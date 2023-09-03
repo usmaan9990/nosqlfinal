@@ -123,4 +123,8 @@ def login(
     return{"message": "Login successful"}
 
 configure(app, MyCurd)
+ 
+ 
+ 
+ 
     

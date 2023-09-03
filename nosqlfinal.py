@@ -13,16 +13,20 @@ def MyCurd(): # My app web page components
     password, set_password = use_state("")
     index, set_index = use_state("")
     gender, set_gender = use_state("")
+    error_message, set_error_message = use_state("")
     
-    def mysubmit(event): # 
-        newtodo={"index": index,"gender": gender,"email": email, "password": password}
+    def mysubmit(event):
         
-        #push this to alltodo
-        alltodo.set_value(alltodo.value + [newtodo])
-        login(newtodo) # function call to login function using the submitted data
         
-    # looping data from alltodo to show on web
-    
+        existing_index = collection.find_one({"index": index})
+        if existing_index:
+            set_error_message("Index Already Exist")
+        else:
+            set_error_message("Sucessfully Completed")
+            newtodo = {"index": index, "gender": gender, "email": email, "password": password}
+            alltodo.set_value(alltodo.value + [newtodo])
+            login(newtodo)
+  
     list = [ ]
     
     def handle_event(event):
@@ -41,6 +45,8 @@ def MyCurd(): # My app web page components
              "background-size": "cover",
              "background-image": "url(https://as1.ftcdn.net/v2/jpg/04/58/64/76/1000_F_458647644_QMgurK1ooH0uxNWuyelKdvIl5kysrPbP.jpg)"}},
         
+        
+        
         ## creating form for submission(HTML , CSS)
         html.form(
             {"on submit": mysubmit},
@@ -50,7 +56,7 @@ def MyCurd(): # My app web page components
             "box-shadow": "0px 4px 6px rgba(0, 0, 0, 0.5)",
             "text-shadow": "2px 2px 4px rgba(0, 0, 0, 0.5)",
                  "font-weight": "bold"}}
-                    ,"E-Library"),
+                    ,"Final Exam"),
             html.br(),
             html.label({"style": {"font-family": "Georgia", "font-size": "15px","color":"White","font-weight": "bold"}}
                     ,"Index No:  "),
@@ -64,6 +70,7 @@ def MyCurd(): # My app web page components
                              "font-size": "15px",
                              "padding": "5px 5px",
                             "border": "2px solid #ccc",
+                            "font-weight": "bold",
                             "border-radius": "5px",
                             "margin": "5px auto",
                             "width": "25%",
@@ -129,6 +136,7 @@ html.br(),
                             "border": "2px solid #ccc",
                             "border-radius": "5px",
                             "margin": "5px auto",
+                            "font-weight": "bold",
                             "width": "70%",
                             "box-sizing": "border-box",
                             "background-color": "#FFD700",
@@ -143,7 +151,7 @@ html.br(),
                     ,"Password:  "),
             html.input(
                 {
-                    "type": "test",
+                    "type": "password",
                     "placeholder": "Password",
                     "on_change": lambda event: set_password(event["target"]["value"]),
                     "style":{
@@ -153,6 +161,7 @@ html.br(),
                             "border": "2px solid #ccc",
                             "border-radius": "5px",
                             "margin": "5px auto",
+                            "font-weight": "bold",
                             "width": "70%",
                             "box-sizing": "border-box",
                             "background-color": "#FFD700",
@@ -174,6 +183,7 @@ html.br(),
             "background-color": "Black",  
             "color": "white",              
             "border": "2px solid #ccc", 
+            "font-weight": "bold",
             "border-radius": "5px", 
             "margin": "5px auto",
             "width": "150px",
@@ -201,6 +211,7 @@ html.br(),
             "margin": "5px auto",
             "width": "150px",
             "height": "40px",
+            "font-weight": "bold",
             "box-sizing": "border-box",
             "outline": "none",
             "align-items": "center",
@@ -209,15 +220,33 @@ html.br(),
                 },
                 "Reset",
             ),html.p(""),
-             html.label({"style":
+            html.label({"style":
                  {"font-family": "Georgia", "font-size": "15px","color":"White","font-weight": "bold","cursor": "pointer"}}
-                    ,"Help : 'https://www.google.com' "), 
+                    ,"Notification: "), html.p(),
+            html.div(
+            {"style":
+                {"background-color": "Black",  
+            "color": "white",              
+            "border": "2px solid #ccc", 
+            "border-radius": "5px", 
+            "margin": "5px auto",
+            "height": "40px",
+            "box-sizing": "border-box",
+            "outline": "none",
+            "display": "flex",
+            "align-items": "center",
+            "justify-content": "center",
+            "width":"70",
+            "font-weight":"bold"
+            }},  # Style for error message
+            error_message,  # Display the error message
+        ),html.p(),
+             
 
         ),
             
         html.ul(list),
     )
-
 
 app = FastAPI()
 
